@@ -24,3 +24,34 @@ pub fn generate_random_string(rng: &mut ChaCha20Rng) -> String {
         .filter_map(|a| char::from_u32(a))
         .collect::<String>()
 }
+
+/// Target output format
+pub enum Target {
+    /// TypeScript core format
+    TsCore,
+    /// Default format
+    Default,
+}
+
+impl Target {
+    /// Parse target from string
+    pub fn from_str(s: &str) -> Self {
+        match s {
+            "ts:core" => Target::TsCore,
+            _ => Target::Default,
+        }
+    }
+
+    /// Print the output in the appropriate format
+    pub fn print(&self, line: &str, random_string: &str) {
+        match self {
+            Target::TsCore => {
+                let sanitized = line.chars().filter(|a| a.is_alphanumeric()).collect::<String>();
+                println!("export const k{}: string = \"{}\";", sanitized, random_string);
+            }
+            Target::Default => {
+                println!("{} {}", random_string, line);
+            }
+        }
+    }
+}
