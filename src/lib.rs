@@ -3,7 +3,7 @@ use rand_chacha::ChaCha20Rng;
 use sha3::Digest;
 
 /// Creates a seeded RNG from the provided arguments
-pub fn create_seeded_rng(args: impl Iterator<Item = impl AsRef<[u8]>>) -> ChaCha20Rng {
+pub fn create_seeded_rng(args: impl Iterator<Item: AsRef<[u8]>>) -> ChaCha20Rng {
     let mut hash = sha3::Sha3_256::default();
     for arg in args {
         hash.update(&arg);
@@ -46,8 +46,14 @@ impl Target {
     pub fn print(&self, line: &str, random_string: &str) {
         match self {
             Target::TsCore => {
-                let sanitized = line.chars().filter(|a| a.is_alphanumeric()).collect::<String>();
-                println!("export const k{}: string = \"{}\";", sanitized, random_string);
+                let sanitized = line
+                    .chars()
+                    .filter(|a| a.is_alphanumeric())
+                    .collect::<String>();
+                println!(
+                    "export const k{}: string = \"{}\";",
+                    sanitized, random_string
+                );
             }
             Target::Default => {
                 println!("{} {}", random_string, line);
